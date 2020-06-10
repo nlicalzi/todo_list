@@ -28,7 +28,7 @@ end
 
 # create a new list 
 post "/lists" do
-  list_name = params[:list_name]
+  list_name = params[:list_name].strip
   if list_name.size >= 1 && list_name.size <= 100
     session[:lists] << { name: params[:list_name], todos: [] }
     session[:success] = "The list has been created."

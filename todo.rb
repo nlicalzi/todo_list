@@ -22,9 +22,9 @@ get "/lists" do
 end
 
 # view individual list and todos
-get "/lists/:list_num" do
+get "/lists/:list_idx" do
   # retrieve list from session[:lists] using its index and :list_num
-  @list = session[:lists][params[:list_num].to_i]
+  @list = session[:lists][params[:list_idx].to_i]
   erb :list, layout: :layout
 end
 
@@ -56,4 +56,8 @@ post "/lists" do
     session[:success] = "The list has been created."
     redirect "/lists"
   end  
+end
+
+post "/lists/:list_num" do
+
 end

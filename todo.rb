@@ -68,13 +68,12 @@ post "/lists" do
   end  
 end
 
-# create a new todo in a list, or update list name
-post "/lists/list/:id" do
+# create a new todo in a list
+post "/lists/list/:id/todos" do 
   id = params[:id].to_i
   @list = session[:lists][id]
 
-  if params[:todo_name] # if we're making a todo list..
-    todo_name = params[:todo_name].strip
+  todo_name = params[:todo_name].strip
 
     error = error_for_todo_name(@list, todo_name)
     if error
@@ -85,20 +84,23 @@ post "/lists/list/:id" do
       session[:success] = "The todo has been created."
       redirect "/lists/list/#{id}"
     end
+end
 
-  elsif params[:list_name] # if we're editing a list name...
-    list_name = params[:list_name].strip
+# update todo list name
+post "/lists/list/:id" do
+  id = params[:id].to_i
+  @list = session[:lists][id]
+  list_name = params[:list_name].strip
 
-    error = error_for_list_name(list_name)
-    if error
-      session[:error] = error
-      erb :edit_list, layout: :layout
-    else
-      @list[:name] = list_name
-      session[:success] = "The list has been updated."
-      redirect "/lists/list/#{id}"
-    end  
-  end
+  error = error_for_list_name(list_name)
+  if error
+    session[:error] = error
+    erb :edit_list, layout: :layout
+  else
+    @list[:name] = list_name
+    session[:success] = "The list has been updated."
+    redirect "/lists/list/#{id}"
+  end  
 end
 
 # edit an existing todo list

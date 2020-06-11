@@ -5,9 +5,19 @@
       <li><a class="edit" href="/lists/list/<%= params[:id] %>/edit">Edit List</a></li>
     </ul>
   </header>
+  
+  <body>
+    <ul>
+      <% @list[:todos].each do |todo| %>
+        <li>
+          <h2><%= todo %></h2>
+        </li>
+      <% end %>
+    </ul>
+  </body>
 </section>
 
-<form action="/lists/list/<%= params[:id] %>" method="post">
+<form action="/lists/list/<%= params[:id] %>/todos" method="post">
   <dl>
     <dt>
       <label for="todo_name">Enter a new todo item:</label>
@@ -17,7 +27,7 @@
     </dd>
   </dl>
   <fieldset class="actions">
-    <input type="submit" value="Save">
+    <input type="submit" value="Add">
     <a href="/">Cancel</a>
   </fieldset>
 </form>

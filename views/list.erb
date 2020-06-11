@@ -1,4 +1,18 @@
-<ul id="lists">
-  <%= @list[:todos] %>
+<ul id="todos">
+  <%= @list %>
 </ul>
 
+<form action=<%= "/lists/#{params[:list_idx].to_i}" %> method="post">
+  <dl>
+    <dt>
+      <label for="todo_name">Enter a new todo item:</label>
+    </dt>
+    <dd>
+      <input name="todo_name" placeholder="Todo Name" type="text" value="">
+    </dd>
+  </dl>
+  <fieldset class="actions">
+    <input type="submit" value="Save">
+    <a href="/">Cancel</a>
+  </fieldset>
+</form>

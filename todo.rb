@@ -23,7 +23,7 @@ end
 
 # view individual list and todos
 get "/lists/:list_idx" do
-  # retrieve list from session[:lists] using its index and :list_num
+  # retrieve list from session[:lists] using its index and :list_idx
   @list = session[:lists][params[:list_idx].to_i]
   erb :list, layout: :layout
 end
@@ -34,7 +34,7 @@ get "/lists/new" do
 end
 
 
-# return an error msg. if the name is invalid, or nil if valid.
+# return an error msg. if list name is invalid, or return nil if valid.
 def error_for_list_name(name)
   if !(1..100).cover? name.size
     return "List name must be between 1-100 characters."
@@ -58,6 +58,27 @@ post "/lists" do
   end  
 end
 
-post "/lists/:list_num" do
+# return an error msg if todo name is invalid, or return nil if valid
+def error_for_todo_name(list, name)
+  if !(1..100).cover? name.size
+    return "Todo name must be between 1-100 characters."
+  elsif list[:todos].any? { |todo| todo == name }
+    return "Todo name must be unique."
+  end
+end
 
+# create a new todo
+post "/lists/:list_idx" do
+  @list = session[:lists][params[:list_idx].to_i]
+  todo_name = params[:todo_name].strip
+
+  error = error_for_todo_name(@list, todo_name)
+  if error
+    session[:error] = error
+    erb :list, layout: :layout
+  else
+    @list[:todos] << todo_name
+    session[:success] = "The todo has been created."
+    redirect "/lists/#{params[:list_idx].to_i}"
+  end
 end

@@ -2,22 +2,19 @@
   <header>
     <h2><%= @list[:name] %></h2>
     <ul>
-      <li><a class="edit" href="/lists/list/<%= params[:id] %>/edit">Edit List</a></li>
+      <li><a class="edit" href="/lists/list/<%= @list_id %>/edit">Edit List</a></li>
     </ul>
   </header>
-  
-  <body>
-    <ul>
-      <% @list[:todos].each do |todo| %>
-        <li>
-          <h2><%= todo %></h2>
-        </li>
-      <% end %>
-    </ul>
-  </body>
+  <ul>
+    <% @list[:todos].each_with_index do |todo, idx| %>
+      <li>
+        <h3><%= todo[:name] %></h3>
+      </li>
+    <% end %>
+  </ul>
 </section>
 
-<form action="/lists/list/<%= params[:id] %>/todos" method="post">
+<form action="/lists/list/<%= @list_id %>/todos" method="post">
   <dl>
     <dt>
       <label for="todo_name">Enter a new todo item:</label>

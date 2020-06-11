@@ -16,7 +16,7 @@ end
 def error_for_todo_name(list, name)
   if !(1..100).cover? name.size
     return "Todo name must be between 1-100 characters."
-  elsif list[:todos].any? { |todo| todo == name }
+  elsif list[:todos].any? { |todo| todo[:name] == name }
     return "Todo name must be unique."
   end
 end
@@ -43,8 +43,8 @@ end
 # view individual list and todos
 get "/lists/list/:id" do
   # retrieve list from session[:lists] using its index and :id
-  id = params[:id].to_i
-  @list = session[:lists][id]
+  @list_id = params[:id].to_i
+  @list = session[:lists][@list_id]
   erb :list, layout: :layout
 end
 
@@ -70,8 +70,8 @@ end
 
 # create a new todo in a list
 post "/lists/list/:id/todos" do 
-  id = params[:id].to_i
-  @list = session[:lists][id]
+  @list_id = params[:id].to_i
+  @list = session[:lists][@list_id]
 
   todo_name = params[:todo_name].strip
 
@@ -80,16 +80,16 @@ post "/lists/list/:id/todos" do
       session[:error] = error
       erb :list, layout: :layout
     else
-      @list[:todos] << todo_name
-      session[:success] = "The todo has been created."
-      redirect "/lists/list/#{id}"
+      @list[:todos] << { name: todo_name, completed: false } 
+      session[:success] = "The todo has been added."
+      redirect "/lists/list/#{@list_id}"
     end
 end
 
 # update todo list name
 post "/lists/list/:id" do
-  id = params[:id].to_i
-  @list = session[:lists][id]
+  @list_id = params[:id].to_i
+  @list = session[:lists][@list_id]
   list_name = params[:list_name].strip
 
   error = error_for_list_name(list_name)
@@ -97,16 +97,16 @@ post "/lists/list/:id" do
     session[:error] = error
     erb :edit_list, layout: :layout
   else
-    @list[:name] = list_name
+    list[:name] = list_name
     session[:success] = "The list has been updated."
-    redirect "/lists/list/#{id}"
+    redirect "/lists/list/#{@list_id}"
   end  
 end
 
 # edit an existing todo list
 get "/lists/list/:id/edit" do
-  id = params[:id].to_i
-  @list = session[:lists][id]
+  @list_id = params[:id].to_i
+  @list = session[:lists][@list_id]
 
   erb :edit_list, layout: :layout
 end
@@ -114,8 +114,8 @@ end
 # delete an existing list
 
 post "/lists/list/:id/destroy" do
-  id = params[:id].to_i
-  session[:lists].delete_at(id)
+  @list_id = params[:id].to_i
+  session[:lists].delete_at(@list_id)
   session[:success] = "The list has been deleted."
   redirect "/lists"
 end

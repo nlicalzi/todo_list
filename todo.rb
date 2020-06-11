@@ -22,9 +22,9 @@ get "/lists" do
 end
 
 # view individual list and todos
-get "/lists/list/:list_idx" do
-  # retrieve list from session[:lists] using its index and :list_idx
-  @list = session[:lists][params[:list_idx].to_i]
+get "/lists/list/:list_id" do
+  # retrieve list from session[:lists] using its index and :list_id
+  @list = session[:lists][params[:list_id].to_i]
   erb :list, layout: :layout
 end
 
@@ -68,8 +68,8 @@ def error_for_todo_name(list, name)
 end
 
 # create a new todo
-post "/lists/list/:list_idx" do
-  @list = session[:lists][params[:list_idx].to_i]
+post "/lists/list/:list_id" do
+  @list = session[:lists][params[:list_id].to_i]
   todo_name = params[:todo_name].strip
 
   error = error_for_todo_name(@list, todo_name)
@@ -79,6 +79,6 @@ post "/lists/list/:list_idx" do
   else
     @list[:todos] << todo_name
     session[:success] = "The todo has been created."
-    redirect "/lists/list/#{params[:list_idx].to_i}"
+    redirect "/lists/list/#{params[:list_id].to_i}"
   end
 end

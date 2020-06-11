@@ -21,8 +21,10 @@ get "/lists" do
   erb :lists, layout: :layout
 end
 
-# view individual list
+# view individual list and todos
 get "/lists/:list_num" do
+  # retrieve list from session[:lists] using its index and :list_num
+  @list = session[:lists][params[:list_num].to_i]
   erb :list, layout: :layout
 end
 

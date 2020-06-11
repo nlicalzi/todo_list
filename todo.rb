@@ -41,9 +41,10 @@ get "/lists" do
 end
 
 # view individual list and todos
-get "/lists/list/:list_id" do
-  # retrieve list from session[:lists] using its index and :list_id
-  @list = session[:lists][params[:list_id].to_i]
+get "/lists/list/:id" do
+  # retrieve list from session[:lists] using its index and :id
+  id = params[:id].to_i
+  @list = session[:lists][id]
   erb :list, layout: :layout
 end
 
@@ -67,18 +68,43 @@ post "/lists" do
   end  
 end
 
-# create a new todo
-post "/lists/list/:list_id" do
-  @list = session[:lists][params[:list_id].to_i]
-  todo_name = params[:todo_name].strip
+# create a new todo in a list, or update list name
+post "/lists/list/:id" do
+  id = params[:id].to_i
+  @list = session[:lists][id]
 
-  error = error_for_todo_name(@list, todo_name)
-  if error
-    session[:error] = error
-    erb :list, layout: :layout
-  else
-    @list[:todos] << todo_name
-    session[:success] = "The todo has been created."
-    redirect "/lists/list/#{params[:list_id].to_i}"
+  if params[:todo_name] # if we're making a todo list..
+    todo_name = params[:todo_name].strip
+
+    error = error_for_todo_name(@list, todo_name)
+    if error
+      session[:error] = error
+      erb :list, layout: :layout
+    else
+      @list[:todos] << todo_name
+      session[:success] = "The todo has been created."
+      redirect "/lists/list/#{id}"
+    end
+
+  elsif params[:list_name] # if we're editing a list name...
+    list_name = params[:list_name].strip
+
+    error = error_for_list_name(list_name)
+    if error
+      session[:error] = error
+      erb :new_list, layout: :layout
+    else
+      @list[:name] = list_name
+      session[:success] = "The list has been updated."
+      redirect "/lists/list/#{id}"
+    end  
   end
+end
+
+# edit an existing todo list
+get "/lists/list/:id/edit" do
+  id = params[:id].to_i
+  @list = session[:lists][id]
+
+  erb :edit_list, layout: :layout
 end

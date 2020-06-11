@@ -1,10 +1,13 @@
 <section id="todos">
   <header>
-  <h2><%= @list[:name] %></h2>
+    <h2><%= @list[:name] %></h2>
+    <ul>
+      <li><a class="edit" href="/lists/list/<%= params[:id] %>/edit">Edit List</a></li>
+    </ul>
   </header>
 </section>
 
-<form action=<%= "/lists/list/#{params[:list_id].to_i}" %> method="post">
+<form action="/lists/list/<%= params[:id] %>" method="post">
   <dl>
     <dt>
       <label for="todo_name">Enter a new todo item:</label>

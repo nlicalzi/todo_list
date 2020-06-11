@@ -97,7 +97,7 @@ post "/lists/list/:id" do
     session[:error] = error
     erb :edit_list, layout: :layout
   else
-    list[:name] = list_name
+    @list[:name] = list_name
     session[:success] = "The list has been updated."
     redirect "/lists/list/#{@list_id}"
   end  
@@ -112,10 +112,21 @@ get "/lists/list/:id/edit" do
 end
 
 # delete an existing list
-
 post "/lists/list/:id/destroy" do
   @list_id = params[:id].to_i
   session[:lists].delete_at(@list_id)
   session[:success] = "The list has been deleted."
   redirect "/lists"
+end
+
+# delete an existing todo
+post "/lists/list/:id/todos/destroy/:todo_idx" do
+  @list_id = params[:id].to_i
+  @list = session[:lists][@list_id]
+
+  todo_id = params[:todo_idx].to_i
+  @list[:todos].delete_at(todo_id)
+  session[:success] = "The todo has been deleted."
+  
+  redirect "/lists/list/#{@list_id}"
 end

@@ -2,6 +2,24 @@ require "sinatra"
 require "sinatra/reloader"
 require "tilt/erubis"
 
+# return an error msg. if list name is invalid, or return nil if valid.
+def error_for_list_name(name)
+  if !(1..100).cover? name.size
+    return "List name must be between 1-100 characters."
+  elsif session[:lists].any? { |list| list[:name] == name }
+    return "List name must be unique."
+  end
+end
+
+# return an error msg if todo name is invalid, or return nil if valid
+def error_for_todo_name(list, name)
+  if !(1..100).cover? name.size
+    return "Todo name must be between 1-100 characters."
+  elsif list[:todos].any? { |todo| todo == name }
+    return "Todo name must be unique."
+  end
+end
+
 configure do
   enable :sessions
   set :session_secret, 'secret' # change to a long hi-entropy env var
@@ -33,16 +51,6 @@ get "/lists/new" do
   erb :new_list, layout: :layout
 end
 
-
-# return an error msg. if list name is invalid, or return nil if valid.
-def error_for_list_name(name)
-  if !(1..100).cover? name.size
-    return "List name must be between 1-100 characters."
-  elsif session[:lists].any? { |list| list[:name] == name }
-    return "List name must be unique."
-  end
-end
-
 # create a new list 
 post "/lists" do
   list_name = params[:list_name].strip
@@ -56,15 +64,6 @@ post "/lists" do
     session[:success] = "The list has been created."
     redirect "/lists"
   end  
-end
-
-# return an error msg if todo name is invalid, or return nil if valid
-def error_for_todo_name(list, name)
-  if !(1..100).cover? name.size
-    return "Todo name must be between 1-100 characters."
-  elsif list[:todos].any? { |todo| todo == name }
-    return "Todo name must be unique."
-  end
 end
 
 # create a new todo

@@ -1,12 +1,10 @@
-<ul id="todos">
-  <% @list[:todos].each do |todo| %>
-    <li>
-      <a>
-        <h2><%= todo %></h2>
-      </a>
-    </li>
-  <% end %>
-</ul>
+<section id="todos">
+  <header>
+  <h2><%= @list[:name] %></h2>
+  </header>
+</section>
+
+<a href="/lists">All Lists</a>
 
 <form action=<%= "/lists/list/#{params[:list_id].to_i}" %> method="post">
   <dl>

@@ -21,6 +21,17 @@ get "/lists" do
   erb :lists, layout: :layout
 end
 
+# view individual list
+get "/lists/:list_num" do
+  erb :list, layout: :layout
+end
+
+# render the new list form
+get "/lists/new" do
+  erb :new_list, layout: :layout
+end
+
+
 # return an error msg. if the name is invalid, or nil if valid.
 def error_for_list_name(name)
   if !(1..100).cover? name.size
@@ -43,9 +54,4 @@ post "/lists" do
     session[:success] = "The list has been created."
     redirect "/lists"
   end  
-end
-
-# render the new list form
-get "/lists/new" do
-  erb :new_list, layout: :layout
 end

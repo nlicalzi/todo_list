@@ -108,3 +108,12 @@ get "/lists/list/:id/edit" do
 
   erb :edit_list, layout: :layout
 end
+
+# delete an existing list
+
+post "/lists/list/:id/destroy" do
+  id = params[:id].to_i
+  session[:lists].delete_at(id)
+  session[:success] = "The list has been deleted."
+  redirect "/lists"
+end

@@ -92,7 +92,7 @@ post "/lists/list/:id" do
     error = error_for_list_name(list_name)
     if error
       session[:error] = error
-      erb :new_list, layout: :layout
+      erb :edit_list, layout: :layout
     else
       @list[:name] = list_name
       session[:success] = "The list has been updated."

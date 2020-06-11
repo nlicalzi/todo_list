@@ -4,8 +4,6 @@
   </header>
 </section>
 
-<a href="/lists">All Lists</a>
-
 <form action=<%= "/lists/list/#{params[:list_id].to_i}" %> method="post">
   <dl>
     <dt>
@@ -20,3 +18,7 @@
     <a href="/">Cancel</a>
   </fieldset>
 </form>
+
+<% content_for :header_links do %>
+  <a href="/lists">All Lists</a>
+<% end %>

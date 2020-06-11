@@ -1,5 +1,6 @@
 require "sinatra"
 require "sinatra/reloader"
+require "sinatra/content_for"
 require "tilt/erubis"
 
 # return an error msg. if list name is invalid, or return nil if valid.

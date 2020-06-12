@@ -26,6 +26,20 @@ configure do
   set :session_secret, 'secret' # change to a long hi-entropy env var
 end
 
+helpers do 
+  def list_complete?(list)
+    list[:todos].all? { |todo| todo[:completed] } && !list[:todos].size.zero?
+  end
+
+  def list_class(list)
+    "complete" if list_complete?(list)
+  end
+
+  def todos_remaining(list)
+    "#{list[:todos].count { |todo| todo[:completed] }}/#{list[:todos].size}"
+  end
+end
+
 before do
   session[:lists] ||= []
 end
@@ -152,6 +166,7 @@ post "/lists/list/:id/mark_all_done" do
   @list[:todos].each do |todo|
     todo[:completed] = true
   end
+
   session[:success] = "All todos have been marked as done."
   redirect "/lists/list/#{@list_id}"
 end

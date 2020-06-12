@@ -21,6 +21,15 @@ def error_for_todo_name(list, name)
   end
 end
 
+# load a list, flashing an error and redirecting to /lists if invalid id
+def load_list(idx)
+  list = session[:lists][idx] if idx && session[:lists][idx]
+  return list if list
+
+  session[:error] = "The specified list was not found."
+  redirect "/lists"
+end
+
 configure do
   enable :sessions
   set :session_secret, 'secret' # change to a long hi-entropy env var
@@ -80,7 +89,7 @@ end
 get "/lists/list/:id" do
   # retrieve list from session[:lists] using its index and :id
   @list_id = params[:id].to_i
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id)
   erb :list, layout: :layout
 end
 
@@ -107,7 +116,7 @@ end
 # create a new todo in a list
 post "/lists/list/:id/todos" do 
   @list_id = params[:id].to_i
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id)
 
   todo_name = params[:todo_name].strip
 
@@ -125,7 +134,7 @@ end
 # update todo list name
 post "/lists/list/:id" do
   @list_id = params[:id].to_i
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id)
   list_name = params[:list_name].strip
 
   error = error_for_list_name(list_name)
@@ -142,7 +151,7 @@ end
 # edit an existing todo list
 get "/lists/list/:id/edit" do
   @list_id = params[:id].to_i
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id)
 
   erb :edit_list, layout: :layout
 end
@@ -158,7 +167,7 @@ end
 # delete an existing todo
 post "/lists/list/:id/todos/destroy/:todo_id" do
   @list_id = params[:id].to_i
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id)
 
   todo_id = params[:todo_id].to_i
   @list[:todos].delete_at(todo_id)
@@ -170,7 +179,7 @@ end
 # update todo status
 post "/lists/list/:id/todos/:todo_id" do
   @list_id = params[:id].to_i
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id)
 
   todo_id = params[:todo_id].to_i
   is_completed = (params[:completed] == "true")
@@ -183,7 +192,7 @@ end
 # mark all todos as completed
 post "/lists/list/:id/mark_all_done" do
   @list_id = params[:id].to_i
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id)
 
   @list[:todos].each do |todo|
     todo[:completed] = true

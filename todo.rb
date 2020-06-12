@@ -27,16 +27,20 @@ configure do
 end
 
 helpers do 
+  def todos_count(list)
+    list[:todos].size
+  end
+
+  def todos_remaining_count(list)
+    list[:todos].select { |todo| !todo[:completed] }.size
+  end
+
   def list_complete?(list)
-    list[:todos].all? { |todo| todo[:completed] } && !list[:todos].size.zero?
+    todos_count(list) > 0 && todos_remaining_count(list) == 0
   end
 
   def list_class(list)
     "complete" if list_complete?(list)
-  end
-
-  def todos_remaining(list)
-    "#{list[:todos].count { |todo| todo[:completed] }}/#{list[:todos].size}"
   end
 end
 

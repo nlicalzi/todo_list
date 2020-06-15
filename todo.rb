@@ -64,10 +64,15 @@ helpers do
   end
 
   def sort_todos(todos, &block)
-    complete_todos, incomplete_todos = todos.partition { |todo| todo_complete?(todo) }
+    complete_todos, incomplete_todos = todos.partition { |todo| todo[:completed] }
 
-    incomplete_todos.each { |todo| yield todo, todos.index(todo) }
-    complete_todos.each { |todo| yield todo, todos.index(todo) }
+    incomplete_todos.each(&block)
+    complete_todos.each(&block)
+  end
+
+  def next_todo_id(todos)
+    max = todos.map { |todo| todo[:id] }.max || 0
+    max + 1
   end
 end
 
@@ -125,7 +130,8 @@ post "/lists/list/:id/todos" do
       session[:error] = error
       erb :list, layout: :layout
     else
-      @list[:todos] << { name: todo_name, completed: false } 
+      id = next_todo_id(@list[:todos])
+      @list[:todos] << { id: id, name: todo_name, completed: false } 
       session[:success] = "The todo has been added."
       redirect "/lists/list/#{@list_id}"
     end
@@ -170,12 +176,12 @@ post "/lists/list/:id/destroy" do
 end
 
 # delete an existing todo
-post "/lists/list/:id/todos/destroy/:todo_id" do
-  @list_id = params[:id].to_i
+post "/lists/list/:list_id/todos/destroy/:id" do
+  @list_id = params[:list_id].to_i
   @list = load_list(@list_id)
 
-  todo_id = params[:todo_id].to_i
-  @list[:todos].delete_at(todo_id)
+  todo_id = params[:id].to_i
+  @list[:todos].reject! { |todo| todo[:id] == todo_id }
 
   if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
     status 204
@@ -186,13 +192,13 @@ post "/lists/list/:id/todos/destroy/:todo_id" do
 end
 
 # update todo status
-post "/lists/list/:id/todos/:todo_id" do
-  @list_id = params[:id].to_i
+post "/lists/list/:list_id/todos/:id" do
+  @list_id = params[:list_id].to_i
   @list = load_list(@list_id)
 
-  todo_id = params[:todo_id].to_i
+  todo_id = params[:id].to_i
   is_completed = (params[:completed] == "true")
-  @list[:todos][todo_id][:completed] = is_completed
+  todo = @list[:todos].find { |todo| todo[:id] == todo_id }
 
   session[:success] = "The todo has been updated."
   redirect "/lists/list/#{@list_id}"

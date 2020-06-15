@@ -5,14 +5,12 @@ $(function() {
     event.stopPropagation();
 
     var ok = confirm("Are you sure? This can't be undone!");
-    if (ok) {
-      // this.submit(); instead of submitting form...
-      
+    if (ok) {      
       var form = $(this);
 
-      $.ajax({ // use ajax
+      var request = $.ajax({ // use ajax
         url: form.attr("action"), // extracted from form element
-        method: form.attr("method"), // extracted from form element
+        method: form.attr("method") // extracted from form element
       });
 
       request.done(function(data, textStatus, jqXHR) {

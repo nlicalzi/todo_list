@@ -4,19 +4,19 @@ $(function() {
     event.preventDefault();
     event.stopPropagation();
 
-    var ok = confirm("Are you sure? This can't be undone!");
-    if (ok) {      
+    var ok = confirm("Are you sure? This cannot be undone!");
+    if (ok) {
       var form = $(this);
 
-      var request = $.ajax({ // use ajax
-        url: form.attr("action"), // extracted from form element
-        method: form.attr("method") // extracted from form element
+      var request = $.ajax({
+        url: form.attr("action"),
+        method: form.attr("method")
       });
 
       request.done(function(data, textStatus, jqXHR) {
-        if (jqXHR.status == 204) {
-          form.parent("li").remove()
-        } else if (jqXHR.status == 200) {
+        if (jqXHR.status === 204) {
+          form.parent("li").remove();
+        } else if (jqXHR.status === 200) {
           document.location = data;
         }
       });

@@ -13,15 +13,9 @@
     <header>
       <h1>Todo Tracker</h1>
       <div class="actions">
-        <%= yield_content :header_links %>
+        <%== yield_content :header_links %>
       </div>
     </header>
-    
-    <% if session[:success] %>
-      <div class="flash success">
-        <p><%= session.delete(:success) %></p>
-      </div>
-    <% end %>
 
     <% if session[:error] %>
       <div class="flash error">
@@ -29,8 +23,14 @@
       </div>
     <% end %>
 
+    <% if session[:success] %>
+      <div class="flash success">
+        <p><%= session.delete(:success) %></p>
+      </div>
+    <% end %>
+
     <main>
-      <%= yield %>
+      <%== yield %>
     </main>
   </body>
 </html>

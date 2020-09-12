@@ -45,6 +45,10 @@ helpers do
     incomplete_todos.each(&block)
     complete_todos.each(&block)
   end
+
+  def disconnect
+    @db.close
+  end
 end
 
 def load_list(id)
@@ -74,6 +78,10 @@ end
 
 before do
   @storage = DatabasePersistence.new(logger)
+end
+
+after do
+  @storage.disconnect
 end
 
 get "/" do

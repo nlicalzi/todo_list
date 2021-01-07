@@ -1,0 +1,3 @@
+*.erb linguist-language=Ruby
+public/javascripts/* linguist-generated=true
+public/stylesheets/* linguist-generated=true

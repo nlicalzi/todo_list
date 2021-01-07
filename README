@@ -1,1 +1,1 @@
-Sinatra app for Todo webapp
+A todo list application built in Ruby (using Sinatra and Erubis) and hosted with a persistent db on Heroku.
